@@ -448,28 +448,27 @@
       }
       lucide.createIcons();
     }
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        const res = await fetch(`${API_URL}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: document.getElementById('login_username').value,
-            password: document.getElementById('login_password').value
-          })
-        });
-        const data = await res.json();
-        if (data.status === 'SUCCESS') {
-          token = data.token;
-          user = data.user;
-          localStorage.setItem('pms_token', token);
-          localStorage.setItem('pms_user', JSON.stringify(user));
-          checkAuth();
-        } else { showToast(data.message, 'error'); }
-      } catch (err) { showToast('Erreur serveur', 'error'); }
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: document.getElementById('login_username').value,
+        password: document.getElementById('login_password').value
+      })
     });
+    const data = await res.json();
+    if (data.status === 'SUCCESS') {
+      token = data.token;
+      user = data.user;
+      localStorage.setItem('pms_token', token);
+      localStorage.setItem('pms_user', JSON.stringify(user));
+      checkAuth();
+    } else { showToast(data.message, 'error'); }
+  } catch (err) { showToast('Erreur serveur', 'error'); }
+});
 
     function logout() {
       localStorage.clear();
