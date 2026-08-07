@@ -15,5 +15,5 @@ app.use('/api/rooms', require('./routes/roomRoutes'));
 app.use('/api/staff', require('./routes/staffRoutes'));
 
 app.listen(PORT, () => {
-  logger.info(`Serveur Enterprise PMS démarré sur http://localhost:${PORT}`);
+  logger.info(`Serveur Enterprise PMS démarré sur le port ${PORT}`);
 });
