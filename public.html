@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hôtel Le Paradis - Accueil & Réservations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+  </style>
+
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <!-- NAVIGATION -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <span class="bg-indigo-600 text-white rounded-xl w-10 h-10 flex items-center justify-center font-bold shadow-md">
+          <i data-lucide="building-2" class="w-5 h-5"></i>
+        </span>
+        <span class="font-bold text-lg tracking-tight text-slate-900">Hôtel Le Paradis</span>
+      </div>
+      <nav class="hidden md:flex space-x-8 text-sm font-semibold text-slate-600">
+        <a href="#accueil" class="hover:text-indigo-600 transition">Accueil</a>
+        <a href="#chambres" class="hover:text-indigo-600 transition">Nos Chambres</a>
+        <a href="#offres" class="hover:text-indigo-600 transition">Offres & Services</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <!-- Bouton sécurisé : Redirige vers le contact (Plus d'accès employé ici) -->
+      <a href="#contact" class="text-xs font-bold bg-indigo-50 text-indigo-700 px-4 py-2.5 rounded-xl hover:bg-indigo-100 transition shadow-xs">Nous Contacter</a>
+    </div>
+  </header>
+  <!-- BANNIÈRE DÉFILANTE (À METTRE ICI) -->
+  <div class="bg-indigo-600 text-white text-xs font-semibold py-2.5 overflow-hidden whitespace-nowrap relative shadow-inner">
+    <div class="inline-block animate-[marquee_25s_linear_infinite] space-x-12">
+      <span class="inline-flex items-center space-x-2"><i data-lucide="sparkles" class="w-4 h-4"></i><span>Bienvenue à l'Hôtel Le Paradis - Réservez dès maintenant votre séjour de luxe à Abidjan !</span></span>
+      <span class="inline-flex items-center space-x-2"><i data-lucide="phone-call" class="w-4 h-4"></i><span>Contactez-nous au +225 07 00 00 00 pour toute information.</span></span>
+      <span class="inline-flex items-center space-x-2"><i data-lucide="gift" class="w-4 h-4"></i><span>Offre spéciale weekend : Profitez de -15% sur nos suites grand luxe !</span></span>
+      <span class="inline-flex items-center space-x-2"><i data-lucide="sparkles" class="w-4 h-4"></i><span>Bienvenue à l'Hôtel Le Paradis - Réservez dès maintenant votre séjour de luxe à Abidjan !</span></span>
+    </div>
+  </div>
+
+ <!-- HERO SECTION AVEC PHOTO D'HÔTEL EN ARRIÈRE-PLAN -->
+  <section id="accueil" class="relative bg-slate-950 text-white py-32 px-6 overflow-hidden">
+    <!-- Image de fond de l'hôtel avec un effet de superposition sombre pour la lisibilité -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80" alt="Hôtel Le Paradis Abidjan" class="w-full h-full object-cover opacity-40">
+    </div>
+
+    <!-- Contenu texte -->
+    <div class="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+      <span class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider backdrop-blur-md">Bienvenue au Paradis</span>
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-md">Le Luxe et le Confort à Abidjan</h1>
+      <p class="text-slate-200 text-lg max-w-2xl mx-auto drop-shadow">Découvrez nos chambres élégantes, profitez de nos services haut de gamme et réservez votre séjour en toute simplicité.</p>
+      <div class="pt-4">
+        <a href="#chambres" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-2xl shadow-xl shadow-indigo-600/40 transition inline-block">Voir les Chambres Disponibles</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION CHAMBRES DISPONIBLES EN TEMPS RÉEL -->
+  <section id="chambres" class="py-20 px-6 max-w-7xl mx-auto space-y-10">
+    <div class="text-center space-y-2">
+      <h2 class="text-3xl font-extrabold text-slate-900">Nos Chambres & Suites</h2>
+      <p class="text-slate-500 text-sm">Disponibilités synchronisées en direct avec notre système de gestion.</p>
+    </div>
+    
+    <div id="publicRoomsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="col-span-3 text-center py-10 text-slate-400">Chargement des chambres disponibles...</div>
+    </div>
+  </section>
+
+  <!-- SECTION OFFRES & SERVICES -->
+  <section id="offres" class="bg-indigo-900 text-white py-20 px-6 my-12">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-extrabold">Nos Offres & Services Exclusifs</h2>
+        <p class="text-indigo-200 text-sm">Tout est pensé pour rendre votre séjour inoubliable.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-indigo-950/60 p-8 rounded-3xl border border-indigo-800/50 space-y-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-600/30 flex items-center justify-center text-indigo-400"><i data-lucide="utensils" class="w-6 h-6"></i></div>
+          <h3 class="font-bold text-xl">Restaurant Gastronomique</h3>
+          <p class="text-slate-300 text-sm">Une cuisine locale et internationale raffinée préparée par nos chefs émérites.</p>
+        </div>
+        <div class="bg-indigo-950/60 p-8 rounded-3xl border border-indigo-800/50 space-y-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-600/30 flex items-center justify-center text-indigo-400"><i data-lucide="waves" class="w-6 h-6"></i></div>
+          <h3 class="font-bold text-xl">Piscine & Détente</h3>
+          <p class="text-slate-300 text-sm">Accès libre à notre grande piscine extérieure et à notre espace bien-être.</p>
+        </div>
+        <div class="bg-indigo-950/60 p-8 rounded-3xl border border-indigo-800/50 space-y-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-600/30 flex items-center justify-center text-indigo-400"><i data-lucide="wifi" class="w-6 h-6"></i></div>
+          <h3 class="font-bold text-xl">Services Premium</h3>
+          <p class="text-slate-300 text-sm">Wi-Fi haut débit gratuit, service de blanchisserie et conciergerie 24h/24.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact" class="bg-slate-950 text-slate-400 py-12 px-6 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center space-x-3">
+        <span class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center font-bold">
+          <i data-lucide="building-2" class="w-4 h-4"></i>
+        </span>
+        <span class="font-bold text-white">Hôtel Le Paradis</span>
+      </div>
+      <p class="text-xs">Abidjan, Côte d'Ivoire | Tél : +225 07 00 00 00 | contact@hotel-leparadis.com</p>
+      <p class="text-xs text-slate-500">© 2026 Hôtel Le Paradis. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+async function loadPublicRooms() {
+      try {
+        const res = await fetch(`${API_URL}/rooms/public`);
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          const container = document.getElementById('publicRoomsContainer');
+          if (data.rooms.length === 0) {
+            container.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-500 font-medium">Toutes nos chambres sont actuellement occupées. Revenez plus tard !</div>`;
+            return;
+          }
+
+          // Quelques photos de chambres élégantes pour illustrer les cartes
+          const roomImages = [
+            'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80', // Chambre standard/luxe
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80', // Suite moderne
+            'https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80'  // Chambre confortable
+          ];
+
+          container.innerHTML = data.rooms.map((room, index) => {
+            // Sélectionne une image en boucle dans le tableau
+            const imageUrl = roomImages[index % roomImages.length];
+
+            return `
+              <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xs flex flex-col justify-between hover:shadow-xl transition group">
+                <!-- Image de la chambre -->
+                <div class="relative h-56 overflow-hidden bg-slate-100">
+                  <img src="${imageUrl}" alt="Chambre ${room.room_number}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                  <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm uppercase">${room.room_type}</span>
+                </div>
+
+                <!-- Contenu -->
+                <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                  <div class="space-y-1">
+                    <h3 class="text-xl font-bold text-slate-900">Chambre ${room.room_number}</h3>
+                    <p class="text-slate-500 text-sm">Chambre élégante et confortable, idéale pour un séjour d'exception.</p>
+                  </div>
+                  
+                  <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full flex items-center space-x-1.5">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span>Disponible</span>
+                    </span>
+                    <a href="tel:+22507000000" class="bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-indigo-600 transition">Réserver</a>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadPublicRooms();
+  </script>
+</body>
+</html>

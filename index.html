@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-[#f8fafc]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMS - Hôtel Le Paradis (Enterprise Edition)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="h-full antialiased text-slate-800 overflow-hidden bg-[#f8fafc]">
+
+  <!-- SECTION CONNEXION -->
+  <div id="loginSection" class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-slate-950">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <div class="bg-gradient-to-tr from-indigo-600 to-violet-600 text-white rounded-2xl w-16 h-16 flex items-center justify-center mx-auto shadow-xl ring-4 ring-indigo-500/20">
+        <i data-lucide="building-2" class="w-8 h-8"></i>
+      </div>
+      <h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-white">Hôtel Le Paradis</h2>
+      <p class="text-center text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Property Management System</p>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <form id="loginForm" class="space-y-5 bg-slate-900/85 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-slate-800">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Identifiant</label>
+          <input type="text" id="login_username" required class="mt-2 block w-full rounded-xl bg-slate-950 border border-slate-800 py-3 px-4 text-white focus:ring-2 focus:ring-indigo-500 sm:text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Mot de passe</label>
+          <input type="password" id="login_password" required class="mt-2 block w-full rounded-xl bg-slate-950 border border-slate-800 py-3 px-4 text-white focus:ring-2 focus:ring-indigo-500 sm:text-sm">
+        </div>
+        <button type="submit" class="w-full flex justify-center items-center space-x-2 rounded-xl bg-indigo-600 px-3.5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Accéder au système</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLICATION PRINCIPALE -->
+  <div id="appSection" class="hidden h-full flex">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-slate-300 flex flex-col justify-between hidden md:flex border-r border-slate-800/80 shadow-2xl">
+      <div>
+        <div class="p-6 flex items-center space-x-3 border-b border-slate-800/60">
+          <span class="bg-gradient-to-tr from-indigo-600 to-violet-600 text-white rounded-xl w-10 h-10 flex items-center justify-center font-bold shadow-md">
+            <i data-lucide="building-2" class="w-5 h-5"></i>
+          </span>
+          <div>
+            <span class="font-bold text-white tracking-tight block text-sm">Hôtel Le Paradis</span>
+            <span class="text-[10px] text-indigo-400 font-semibold tracking-wider uppercase">Enterprise PMS</span>
+          </div>
+        </div>
+        <nav class="p-4 space-y-1.5 overflow-y-auto max-h-[calc(100vh-180px)]">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow-md shadow-indigo-600/20">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Tableau de bord</span>
+          </button>
+          <button onclick="switchTab('rooms')" id="nav-rooms" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-900 hover:text-white transition text-slate-400">
+            <i data-lucide="bed-double" class="w-4 h-4"></i>
+            <span>Chambres & Statuts</span>
+          </button>
+          <button onclick="switchTab('reservations')" id="nav-reservations" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-900 hover:text-white transition text-slate-400">
+            <i data-lucide="calendar-check" class="w-4 h-4"></i>
+            <span>Réservations & Check-in</span>
+          </button>
+          <button onclick="switchTab('services')" id="nav-services" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-900 hover:text-white transition text-slate-400">
+            <i data-lucide="coffee" class="w-4 h-4"></i>
+            <span>Services & Note (Folio)</span>
+          </button>
+          <button onclick="switchTab('stocks')" id="nav-stocks" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-900 hover:text-white transition text-slate-400">
+            <i data-lucide="package" class="w-4 h-4"></i>
+            <span>Gestion des Stocks</span>
+          </button>
+          <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-900 hover:text-white transition text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+            <span>Clients & Historique</span>
+          </button>
+          <button onclick="switchTab('admin')" id="nav-admin" class="admin-only hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-900 hover:text-white transition text-slate-400">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>Personnel & Comptes</span>
+          </button>
+        </nav>
+      </div>
+      <div class="p-4 border-t border-slate-800/60 bg-slate-900/40">
+        <div class="text-[11px] text-slate-500 uppercase font-bold tracking-wider mb-1">Session active</div>
+        <div class="font-bold text-white text-sm truncate" id="displayUser"></div>
+        <div class="text-xs text-indigo-400 font-medium mb-3" id="displayRole"></div>
+        <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 py-2 rounded-xl text-xs font-semibold transition">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Déconnexion</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <header class="bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-8 py-4 flex justify-between items-center md:justify-end sticky top-0 z-30 shadow-xs">
+        <div class="md:hidden font-bold text-slate-800">Le Paradis PMS</div>
+        <div class="flex items-center space-x-4">
+            <!-- 🟢 BOUTON VERS LE SITE PUBLIC AJOUTÉ ICI -->
+          <a href="public.html" target="_blank" class="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition border border-slate-200">
+            <i data-lucide="globe" class="w-4 h-4 text-indigo-600"></i>
+            <span>Voir le Site Public</span>
+          </a>
+          <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-3.5 py-1.5 rounded-full font-semibold flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Système Opérationnel</span>
+          </span>
+        </div>
+      </header>
+
+      <main class="p-8 max-w-7xl mx-auto w-full space-y-6">
+
+        <!-- DASHBOARD -->
+        <div id="tab-content-dashboard" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/75 shadow-xs">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Chiffre d'Affaires du Jour</p>
+              <h3 id="dash-revenue" class="text-2xl font-extrabold text-slate-900 mt-2">0 FCFA</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/75 shadow-xs">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Taux d'Occupation</p>
+              <h3 id="dash-occupancy" class="text-2xl font-extrabold text-indigo-600 mt-2">0%</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/75 shadow-xs">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Chambres Libres</p>
+              <h3 id="dash-free" class="text-2xl font-extrabold text-emerald-600 mt-2">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/75 shadow-xs">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Paiements en Attente</p>
+              <h3 id="dash-pending" class="text-2xl font-extrabold text-amber-600 mt-2">0 FCFA</h3>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/75 shadow-xs lg:col-span-2">
+              <h3 class="font-bold text-slate-900 mb-4 text-sm tracking-wide">Évolution des Recettes (Semaine)</h3>
+              <canvas id="weeklyChart" class="w-full h-64"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/75 shadow-xs">
+              <h3 class="font-bold text-slate-900 mb-4 text-sm tracking-wide">Modes de Règlement</h3>
+              <canvas id="paymentChart" class="w-full h-64"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAMBRES -->
+        <div id="tab-content-rooms" class="hidden space-y-6">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="bed-double" class="w-5 h-5 text-indigo-600"></i>
+              <span>Grille des Chambres (5 statuts)</span>
+            </h2>
+          </div>
+          <div id="roomsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
+
+        <!-- RÉSERVATIONS & CHECK-IN -->
+        <div id="tab-content-reservations" class="hidden space-y-6 max-w-3xl">
+          <div class="bg-white p-8 rounded-3xl border border-slate-200/75 shadow-xs">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center space-x-2">
+              <i data-lucide="calendar-check" class="w-5 h-5 text-indigo-600"></i>
+              <span>Enregistrement & Attribution Automatique</span>
+            </h2>
+            <form id="reservationForm" class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Nom du Client</label>
+                  <input type="text" id="guest_name" required placeholder="Ex: Jean Kouassi" class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Téléphone & Pièce d'identité</label>
+                  <input type="text" id="guest_phone" required placeholder="Ex: +225 07000000 / CNI-123" class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Catégorie Souhaitée</label>
+                  <select id="category_select" onchange="filterRoomsByCategory()" class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                    <option value="">Toutes catégories</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Deluxe">Deluxe</option>
+                    <option value="Suite">Suite</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Chambre Disponible</label>
+                  <select id="room_select" required class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm"></select>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Montant Total (FCFA)</label>
+                  <input type="number" id="total_amount" required placeholder="50000" class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Acompte Versé</label>
+                  <input type="number" id="deposit_amount" value="0" placeholder="10000" class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Règlement Acompte</label>
+                  <select id="res_payment_method" class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                    <option value="cash">Espèces</option>
+                    <option value="mobile_money">Mobile Money</option>
+                    <option value="card">Carte Bancaire</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Check-in</label>
+                  <input type="date" id="check_in" required class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Check-out</label>
+                  <input type="date" id="check_out" required class="mt-1.5 block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-slate-900 text-sm">
+                </div>
+              </div>
+              <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20">Valider l'Attribution & Encaisser</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- SERVICES & CONSO AUTOMATIQUES (FOLIO) -->
+        <div id="tab-content-services" class="hidden space-y-6">
+          <div class="bg-white p-8 rounded-3xl border border-slate-200/75 shadow-xs space-y-6">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="coffee" class="w-5 h-5 text-indigo-600"></i>
+              <span>Ajout de Consommations (Restaurant, Bar, Blanchisserie...)</span>
+            </h2>
+            <form id="serviceForm" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Chambre Occupée</label>
+                <select id="service_room_select" required class="block w-full rounded-xl border border-slate-300 py-2 px-3 text-slate-900 text-sm"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Service / Prestation</label>
+                <select id="service_type" class="block w-full rounded-xl border border-slate-300 py-2 px-3 text-slate-900 text-sm">
+                  <option value="Restaurant">Restaurant</option>
+                  <option value="Bar">Bar</option>
+                  <option value="Blanchisserie">Blanchisserie</option>
+                  <option value="Piscine / Loisirs">Piscine / Loisirs</option>
+                  <option value="Salle de conférence">Salle de conférence</option>
+                  <option value="Service en chambre">Service en chambre</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Montant (FCFA)</label>
+                <input type="number" id="service_amount" required placeholder="5000" class="block w-full rounded-xl border border-slate-300 py-2 px-3 text-slate-900 text-sm">
+              </div>
+              <button type="submit" class="bg-indigo-600 text-white font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-indigo-500 transition shadow-xs">Ajouter à la facture</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- STOCKS -->
+        <div id="tab-content-stocks" class="hidden space-y-6">
+          <div class="bg-white p-8 rounded-3xl border border-slate-200/75 shadow-xs space-y-5">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i>
+              <span>Inventaire & Gestion des Stocks (Alimentaire, Boissons, Linge...)</span>
+            </h2>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200/60">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                    <th class="p-4">Article</th>
+                    <th class="p-4">Catégorie</th>
+                    <th class="p-4">Quantité en Stock</th>
+                    <th class="p-4">Seuil d'alerte</th>
+                    <th class="p-4">État</th>
+                  </tr>
+                </thead>
+                <tbody id="stocksTableBody" class="divide-y divide-slate-100 text-sm">
+                  <tr><td colspan="5" class="p-6 text-center text-slate-400">Chargement des stocks...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORIQUE & CLIENTS -->
+        <div id="tab-content-history" class="hidden space-y-6">
+          <div class="bg-white p-8 rounded-3xl border border-slate-200/75 shadow-xs space-y-5">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="search" class="w-5 h-5 text-indigo-600"></i>
+              <span>Fichier Clients & Historique des Séjours</span>
+            </h2>
+            <input type="text" id="searchInput" placeholder="Rechercher par nom de client ou téléphone..." oninput="searchClients()" class="block w-full rounded-xl border border-slate-300 py-3 px-4 text-slate-900 sm:text-sm">
+            <div class="overflow-x-auto rounded-2xl border border-slate-200/60">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                    <th class="p-4">Client</th>
+                    <th class="p-4">Téléphone / ID</th>
+                    <th class="p-4">Chambre</th>
+                    <th class="p-4">Séjour</th>
+                    <th class="p-4">Total & Solde</th>
+                    <th class="p-4">Facture PDF</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody" class="divide-y divide-slate-100 text-sm">
+                  <tr><td colspan="6" class="p-6 text-center text-slate-400">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN & PERSONNEL -->
+        <div id="tab-content-admin" class="hidden space-y-6">
+          <div class="bg-white p-8 rounded-3xl border border-slate-200/75 shadow-xs space-y-5">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
+              <span>Gestion du Personnel & Comptes</span>
+            </h2>
+            <form id="addUserForm" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Identifiant</label>
+                <input type="text" id="new_username" required class="block w-full rounded-xl border border-slate-300 py-2 px-3 text-slate-900 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Mot de passe</label>
+                <input type="password" id="new_password" required class="block w-full rounded-xl border border-slate-300 py-2 px-3 text-slate-900 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Rôle</label>
+                <select id="new_role" class="block w-full rounded-xl border border-slate-300 py-2 px-3 text-slate-900 text-sm">
+                  <option value="receptionist">Réceptionniste</option>
+                  <option value="admin">Directeur (Admin)</option>
+                </select>
+              </div>
+              <button type="submit" class="bg-indigo-600 text-white font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-indigo-500 transition shadow-xs">Créer</button>
+            </form>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200/60 mt-4">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                    <th class="p-4">ID</th>
+                    <th class="p-4">Identifiant</th>
+                    <th class="p-4">Rôle</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- PATRON FACTURE PDF -->
+  <div id="invoicePrintArea" class="hidden bg-white w-[700px] p-10 text-slate-800">
+    <div class="text-center border-b-2 border-slate-900 pb-4 mb-6">
+      <h1 class="text-2xl font-bold text-slate-900">HÔTEL LE PARADIS</h1>
+      <p class="text-xs text-slate-500 mt-1">Abidjan | Tél: +225 07 00 00 00</p>
+      <h3 class="text-lg font-bold text-slate-800 mt-3">FACTURE N° <span id="inv_number"></span></h3>
+    </div>
+    <div class="mb-6 bg-slate-50 p-4 rounded-xl border-l-4 border-indigo-600 text-sm space-y-1">
+      <p><b>Client :</b> <span id="inv_client"></span></p>
+      <p><b>Pièce d'identité / Tél :</b> <span id="inv_phone"></span></p>
+      <p><b>Chambre :</b> <span id="inv_room"></span></p>
+    </div>
+    <table class="w-full border-collapse text-sm mb-6">
+      <thead>
+        <tr class="bg-slate-100 text-slate-700">
+          <th class="border border-slate-300 p-2.5 text-left">Description</th>
+          <th class="border border-slate-300 p-2.5 text-right">Montant</th>
+        </tr>
+      </thead>
+      <tbody id="inv_items_body"></tbody>
+    </table>
+    <div class="text-right space-y-1 font-semibold text-sm">
+      <p>Total Séjour & Services : <span id="inv_total"></span> FCFA</p>
+      <p>Acompte versé : <span id="inv_deposit"></span> FCFA</p>
+      <p class="text-indigo-600 text-base">Reste à payer : <span id="inv_due"></span> FCFA</p>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+    let token = localStorage.getItem('pms_token');
+    let user = JSON.parse(localStorage.getItem('pms_user') || '{}');
+    let roomsCache = [];
+    let weeklyChartInstance = null;
+    let paymentChartInstance = null;
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-slate-900 text-white border-indigo-500' : 'bg-rose-600 text-white border-rose-700';
+      toast.className = `flex items-center space-x-3 px-5 py-3.5 rounded-2xl border-l-4 text-sm font-medium shadow-2xl transition-all duration-300 ${bgColor}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    function checkAuth() {
+      if (token && user.username) {
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('appSection').classList.remove('hidden');
+        document.getElementById('displayUser').innerText = user.username;
+        document.getElementById('displayRole').innerText = user.role;
+        const adminElements = document.querySelectorAll('.admin-only');
+        if (user.role === 'admin') {
+          adminElements.forEach(el => el.classList.remove('hidden'));
+          loadDashboardStats();
+          loadAdminData();
+        } else {
+          adminElements.forEach(el => el.classList.add('hidden'));
+        }
+        loadRooms();
+        loadStocks();
+        searchClients();
+        switchTab('dashboard');
+      } else {
+        document.getElementById('loginSection').classList.remove('hidden');
+        document.getElementById('appSection').classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function switchTab(tabName) {
+      ['dashboard', 'rooms', 'reservations', 'services', 'stocks', 'history', 'admin'].forEach(t => {
+        const content = document.getElementById(`tab-content-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (content) content.classList.add('hidden');
+        if (nav) {
+          nav.classList.remove('bg-indigo-600', 'text-white', 'shadow-md', 'shadow-indigo-600/20');
+          nav.classList.add('hover:bg-slate-900', 'hover:text-white', 'text-slate-400');
+        }
+      });
+      document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-${tabName}`);
+      if (activeNav) {
+        activeNav.classList.add('bg-indigo-600', 'text-white', 'shadow-md', 'shadow-indigo-600/20');
+        activeNav.classList.remove('hover:bg-slate-900', 'hover:text-white', 'text-slate-400');
+      }
+      lucide.createIcons();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('login_username').value,
+            password: document.getElementById('login_password').value
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          token = data.token;
+          user = data.user;
+          localStorage.setItem('pms_token', token);
+          localStorage.setItem('pms_user', JSON.stringify(user));
+          checkAuth();
+        } else { showToast(data.message, 'error'); }
+      } catch (err) { showToast('Erreur serveur', 'error'); }
+    });
+
+    function logout() {
+      localStorage.clear();
+      token = null;
+      user = {};
+      checkAuth();
+    }
+
+    async function loadRooms() {
+      try {
+        const res = await fetch(`${API_URL}/rooms`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          roomsCache = data.rooms;
+          const container = document.getElementById('roomsContainer');
+          container.innerHTML = '';
+          
+          const selectRes = document.getElementById('room_select');
+          const selectServ = document.getElementById('service_room_select');
+          selectRes.innerHTML = '<option value="">-- Choisir --</option>';
+          selectServ.innerHTML = '<option value="">-- Choisir --</option>';
+
+          data.rooms.forEach(room => {
+            let badge = '', cls = '', acts = '';
+            switch(room.status) {
+              case 'occupied':
+                badge = 'Occupée'; cls = 'bg-rose-50 border-rose-200 text-rose-900';
+                acts = `<button onclick="checkout('${room.id}')" class="bg-amber-600 text-white text-xs py-2 px-3 rounded-xl">Libérer</button>`;
+                selectServ.innerHTML += `<option value="${room.id}">Chambre ${room.room_number} (${room.room_type})</option>`;
+                break;
+              case 'reserved':
+                badge = 'Réservée'; cls = 'bg-indigo-50 border-indigo-200 text-indigo-900';
+                acts = `<button onclick="changeStatus('${room.id}', 'occupied')" class="bg-emerald-600 text-white text-xs py-2 px-3 rounded-xl">Check-in</button>`;
+                break;
+              case 'cleaning':
+                badge = 'En nettoyage'; cls = 'bg-amber-50 border-amber-200 text-amber-900';
+                acts = `<button onclick="changeStatus('${room.id}', 'available')" class="bg-sky-600 text-white text-xs py-2 px-3 rounded-xl">Prête</button>`;
+                break;
+              case 'maintenance':
+                badge = 'Hors service'; cls = 'bg-slate-100 border-slate-300 text-slate-800';
+                acts = `<button onclick="changeStatus('${room.id}', 'available')" class="bg-slate-700 text-white text-xs py-2 px-3 rounded-xl">Réparée</button>`;
+                break;
+              default:
+                badge = 'Disponible'; cls = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+                acts = `<button onclick="changeStatus('${room.id}', 'maintenance')" class="bg-slate-600 text-white text-xs py-2 px-3 rounded-xl">Maintenance</button>`;
+                break;
+            }
+            if(room.status === 'available') {
+              selectRes.innerHTML += `<option value="${room.id}" data-cat="${room.room_type}">Chambre ${room.room_number} (${room.room_type})</option>`;
+            }
+            container.innerHTML += `
+              <div class="p-6 rounded-3xl border ${cls} flex flex-col justify-between space-y-4 shadow-xs">
+                <div>
+                  <div class="font-extrabold text-lg text-slate-900">Chambre ${room.room_number}</div>
+                  <div class="text-xs opacity-75">${room.room_type}</div>
+                </div>
+                <div class="text-sm font-semibold">${badge}</div>
+                <div class="flex gap-2 pt-3 border-t border-black/5">${acts}</div>
+              </div>`;
+          });
+          lucide.createIcons();
+        }
+      } catch(err) { console.error(err); }
+    }
+
+    function filterRoomsByCategory() {
+      const cat = document.getElementById('category_select').value;
+      const select = document.getElementById('room_select');
+      select.innerHTML = '<option value="">-- Choisir --</option>';
+      roomsCache.filter(r => r.status === 'available' && (!cat || r.room_type === cat)).forEach(room => {
+        select.innerHTML += `<option value="${room.id}">Chambre ${room.room_number} (${room.room_type})</option>`;
+      });
+    }
+
+    document.getElementById('reservationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        guest_name: document.getElementById('guest_name').value,
+        guest_phone: document.getElementById('guest_phone').value,
+        room_id: document.getElementById('room_select').value,
+        total_amount: parseFloat(document.getElementById('total_amount').value),
+        deposit_amount: parseFloat(document.getElementById('deposit_amount').value) || 0,
+        payment_method: document.getElementById('res_payment_method').value,
+        check_in: document.getElementById('check_in').value,
+        check_out: document.getElementById('check_out').value
+      };
+      const res = await fetch(`${API_URL}/rooms/reservations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      if(res.ok) {
+        showToast('Réservation et attribution enregistrées !');
+        document.getElementById('reservationForm').reset();
+        loadRooms();
+        searchClients();
+        if(user.role === 'admin') loadDashboardStats();
+      } else { showToast('Erreur enregistrement', 'error'); }
+    });
+
+    document.getElementById('serviceForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        room_id: document.getElementById('service_room_select').value,
+        service_type: document.getElementById('service_type').value,
+        amount: parseFloat(document.getElementById('service_amount').value)
+      };
+      const res = await fetch(`${API_URL}/rooms/services`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      if(res.ok) {
+        showToast('Consommation ajoutée automatiquement à la note !');
+        document.getElementById('serviceForm').reset();
+      } else { showToast('Erreur ajout service', 'error'); }
+    });
+
+    document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        username: document.getElementById('new_username').value,
+        password: document.getElementById('new_password').value,
+        role: document.getElementById('new_role').value
+      };
+      const res = await fetch(`${API_URL}/staff`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if(res.ok && data.status === 'SUCCESS') {
+        showToast('Personnel créé avec succès !');
+        document.getElementById('addUserForm').reset();
+        loadAdminData();
+      } else { showToast(data.message || 'Erreur création personnel', 'error'); }
+    });
+
+    async function loadStocks() {
+      const res = await fetch(`${API_URL}/rooms/stocks`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      if(data.status === 'SUCCESS') {
+        const tbody = document.getElementById('stocksTableBody');
+        tbody.innerHTML = data.stocks.map(s => `
+          <tr class="hover:bg-slate-50">
+            <td class="p-4 font-semibold">${s.item_name}</td>
+            <td class="p-4 text-slate-600">${s.category}</td>
+            <td class="p-4 font-bold">${s.quantity}</td>
+            <td class="p-4 text-slate-500">${s.min_threshold}</td>
+            <td class="p-4">${s.quantity <= s.min_threshold ? '<span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-full text-xs font-bold">Alerte Stock Bas</span>' : '<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-bold">Normal</span>'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function searchClients() {
+      const q = document.getElementById('searchInput').value;
+      const res = await fetch(`${API_URL}/rooms/reservations/search?q=${encodeURIComponent(q)}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      if(data.status === 'SUCCESS') {
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = data.reservations.map(item => `
+          <tr class="hover:bg-slate-50">
+            <td class="p-4 font-semibold">${item.guest_name}</td>
+            <td class="p-4 text-slate-600">${item.guest_phone}</td>
+            <td class="p-4">Chambre ${item.room_number || 'N/A'}</td>
+            <td class="p-4 text-xs text-slate-500">${item.check_in} au ${item.check_out}</td>
+            <td class="p-4 font-semibold">${item.total_amount} FCFA <br><span class="text-xs text-indigo-600 font-normal">Acompte : ${item.deposit_amount || 0}</span></td>
+            <td class="p-4"><button onclick='printInvoice(${JSON.stringify(item)})' class="bg-purple-600 text-white text-xs px-3 py-1.5 rounded-xl">PDF</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function checkout(roomId) {
+      if(confirm('Libérer la chambre et clôturer le dossier ?')) {
+        await fetch(`${API_URL}/rooms/${roomId}/checkout`, { method: 'PATCH', headers: { 'Authorization': `Bearer ${token}` } });
+        showToast('Chambre passée en nettoyage.');
+        loadRooms();
+        if(user.role === 'admin') loadDashboardStats();
+      }
+    }
+
+    async function changeStatus(roomId, status) {
+      await fetch(`${API_URL}/rooms/${roomId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ status })
+      });
+      showToast('Statut mis à jour');
+      loadRooms();
+      if(user.role === 'admin') loadDashboardStats();
+    }
+
+    async function loadDashboardStats() {
+      const res = await fetch(`${API_URL}/rooms/reports/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      if(data.status === 'SUCCESS') {
+        document.getElementById('dash-revenue').innerText = `${data.daily_revenue} FCFA`;
+        document.getElementById('dash-occupancy').innerText = `${data.occupancy_rate}%`;
+        document.getElementById('dash-free').innerText = data.free_rooms;
+        document.getElementById('dash-pending').innerText = `${data.pending_payments} FCFA`;
+
+        if (weeklyChartInstance) weeklyChartInstance.destroy();
+        weeklyChartInstance = new Chart(document.getElementById('weeklyChart').getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: data.weekly_stats.map(s => s.day),
+            datasets: [{ label: 'Recettes', data: data.weekly_stats.map(s => s.total), borderColor: '#4f46e5', tension: 0.3, fill: true, backgroundColor: 'rgba(79, 70, 229, 0.05)' }]
+          },
+          options: { responsive: true, plugins: { legend: { display: false } } }
+        });
+
+        if (paymentChartInstance) paymentChartInstance.destroy();
+        paymentChartInstance = new Chart(document.getElementById('paymentChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Espèces', 'Mobile Money', 'Carte'],
+            datasets: [{ data: [data.payment_breakdown.cash || 0, data.payment_breakdown.mobile_money || 0, data.payment_breakdown.card || 0], backgroundColor: ['#4f46e5', '#f59e0b', '#10b981'] }]
+          },
+          options: { responsive: true }
+        });
+      }
+    }
+
+    async function loadAdminData() {
+      const res = await fetch(`${API_URL}/auth/users`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      if(data.status === 'SUCCESS') {
+        document.getElementById('usersTableBody').innerHTML = data.users.map(u => `
+          <tr class="hover:bg-slate-50"><td class="p-4">${u.id}</td><td class="p-4 font-semibold">${u.username}</td><td class="p-4">${u.role}</td></tr>
+        `).join('');
+      }
+    }
+
+    function printInvoice(item) {
+      document.getElementById('inv_number').innerText = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('inv_client').innerText = item.guest_name;
+      document.getElementById('inv_phone').innerText = item.guest_phone;
+      document.getElementById('inv_room').innerText = 'Chambre ' + (item.room_number || 'N/A');
+      document.getElementById('inv_total').innerText = item.total_amount;
+      document.getElementById('inv_deposit').innerText = item.deposit_amount || 0;
+      document.getElementById('inv_due').innerText = item.total_amount - (item.deposit_amount || 0);
+
+      let rows = `<tr><td class="border border-slate-300 p-2.5">Séjour (${item.check_in} au ${item.check_out})</td><td class="border border-slate-300 p-2.5 text-right">${item.total_amount} FCFA</td></tr>`;
+      if(item.services && item.services.length > 0) {
+        item.services.forEach(s => {
+          rows += `<tr><td class="border border-slate-300 p-2.5">Service : ${s.service_type}</td><td class="border border-slate-300 p-2.5 text-right">${s.amount} FCFA</td></tr>`;
+        });
+      }
+      document.getElementById('inv_items_body').innerHTML = rows;
+
+      const el = document.getElementById('invoicePrintArea');
+      el.classList.remove('hidden');
+      html2pdf().from(el).set({ margin: 10, filename: `Facture_${item.guest_name}.pdf` }).save().then(() => el.classList.add('hidden'));
+    }
+
+    checkAuth();
+  </script>
+</body>
+</html>
