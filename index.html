@@ -478,7 +478,7 @@
       checkAuth();
     }
 
-    async function loadRooms() {
+async function loadRooms() {
       const container = document.getElementById('roomsContainer');
       container.innerHTML = '<div class="col-span-full p-8 text-center text-slate-400">Chargement des chambres en cours... (Patientez si le serveur se réveille)</div>';
       
@@ -486,6 +486,13 @@
         const res = await fetch(`${API_URL}/rooms`, { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
         
+        // Si le jeton est invalide ou expiré, on déconnecte automatiquement l'utilisateur
+        if (res.status === 401 || (data.message && data.message.toLowerCase().includes('jeton'))) {
+          showToast('Session expirée, veuillez vous reconnecter.', 'error');
+          logout();
+          return;
+        }
+
         if (data.status === 'SUCCESS') {
           roomsCache = data.rooms || [];
           container.innerHTML = '';
@@ -547,7 +554,6 @@
         container.innerHTML = `<div class="col-span-full p-8 text-center text-rose-500 font-semibold bg-rose-50 rounded-3xl border border-rose-200">Erreur de connexion au serveur (Render est peut-être en train de redémarrer).</div>`;
       }
     }
-
     function filterRoomsByCategory() {
       const cat = document.getElementById('category_select').value;
       const select = document.getElementById('room_select');
