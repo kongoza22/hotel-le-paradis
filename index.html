@@ -388,7 +388,7 @@
   </div>
 
   <script>
-    const API_URL = 'https://hotel-le-paradis.onrender.com';
+    const API_URL = 'https://hotel-le-paradis.onrender.com/api';
     let token = localStorage.getItem('pms_token');
     let user = JSON.parse(localStorage.getItem('pms_user') || '{}');
     let roomsCache = [];
@@ -448,27 +448,28 @@
       }
       lucide.createIcons();
     }
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: document.getElementById('login_username').value,
-        password: document.getElementById('login_password').value
-      })
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('login_username').value,
+            password: document.getElementById('login_password').value
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          token = data.token;
+          user = data.user;
+          localStorage.setItem('pms_token', token);
+          localStorage.setItem('pms_user', JSON.stringify(user));
+          checkAuth();
+        } else { showToast(data.message, 'error'); }
+      } catch (err) { showToast('Erreur serveur', 'error'); }
     });
-    const data = await res.json();
-    if (data.status === 'SUCCESS') {
-      token = data.token;
-      user = data.user;
-      localStorage.setItem('pms_token', token);
-      localStorage.setItem('pms_user', JSON.stringify(user));
-      checkAuth();
-    } else { showToast(data.message, 'error'); }
-  } catch (err) { showToast('Erreur serveur', 'error'); }
-});
 
     function logout() {
       localStorage.clear();
@@ -488,8 +489,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
           
           const selectRes = document.getElementById('room_select');
           const selectServ = document.getElementById('service_room_select');
-          selectRes.innerHTML = '<option value="">-- Choisir --</option>';
-          selectServ.innerHTML = '<option value="">-- Choisir --</option>';
+          if(selectRes) selectRes.innerHTML = '<option value="">-- Choisir --</option>';
+          if(selectServ) selectServ.innerHTML = '<option value="">-- Choisir --</option>';
 
           data.rooms.forEach(room => {
             let badge = '', cls = '', acts = '';
@@ -497,7 +498,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
               case 'occupied':
                 badge = 'Occupée'; cls = 'bg-rose-50 border-rose-200 text-rose-900';
                 acts = `<button onclick="checkout('${room.id}')" class="bg-amber-600 text-white text-xs py-2 px-3 rounded-xl">Libérer</button>`;
-                selectServ.innerHTML += `<option value="${room.id}">Chambre ${room.room_number} (${room.room_type})</option>`;
+                if(selectServ) selectServ.innerHTML += `<option value="${room.id}">Chambre ${room.room_number} (${room.room_type})</option>`;
                 break;
               case 'reserved':
                 badge = 'Réservée'; cls = 'bg-indigo-50 border-indigo-200 text-indigo-900';
@@ -516,7 +517,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 acts = `<button onclick="changeStatus('${room.id}', 'maintenance')" class="bg-slate-600 text-white text-xs py-2 px-3 rounded-xl">Maintenance</button>`;
                 break;
             }
-            if(room.status === 'available') {
+            if(room.status === 'available' && selectRes) {
               selectRes.innerHTML += `<option value="${room.id}" data-cat="${room.room_type}">Chambre ${room.room_number} (${room.room_type})</option>`;
             }
             container.innerHTML += `
@@ -537,6 +538,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     function filterRoomsByCategory() {
       const cat = document.getElementById('category_select').value;
       const select = document.getElementById('room_select');
+      if(!select) return;
       select.innerHTML = '<option value="">-- Choisir --</option>';
       roomsCache.filter(r => r.status === 'available' && (!cat || r.room_type === cat)).forEach(room => {
         select.innerHTML += `<option value="${room.id}">Chambre ${room.room_number} (${room.room_type})</option>`;
@@ -612,6 +614,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       const data = await res.json();
       if(data.status === 'SUCCESS') {
         const tbody = document.getElementById('stocksTableBody');
+        if(!tbody) return;
         tbody.innerHTML = data.stocks.map(s => `
           <tr class="hover:bg-slate-50">
             <td class="p-4 font-semibold">${s.item_name}</td>
@@ -625,11 +628,13 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 
     async function searchClients() {
-      const q = document.getElementById('searchInput').value;
+      const searchInput = document.getElementById('searchInput');
+      const q = searchInput ? searchInput.value : '';
       const res = await fetch(`${API_URL}/rooms/reservations/search?q=${encodeURIComponent(q)}`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if(data.status === 'SUCCESS') {
         const tbody = document.getElementById('historyTableBody');
+        if(!tbody) return;
         tbody.innerHTML = data.reservations.map(item => `
           <tr class="hover:bg-slate-50">
             <td class="p-4 font-semibold">${item.guest_name}</td>
@@ -672,25 +677,31 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         document.getElementById('dash-free').innerText = data.free_rooms;
         document.getElementById('dash-pending').innerText = `${data.pending_payments} FCFA`;
 
-        if (weeklyChartInstance) weeklyChartInstance.destroy();
-        weeklyChartInstance = new Chart(document.getElementById('weeklyChart').getContext('2d'), {
-          type: 'line',
-          data: {
-            labels: data.weekly_stats.map(s => s.day),
-            datasets: [{ label: 'Recettes', data: data.weekly_stats.map(s => s.total), borderColor: '#4f46e5', tension: 0.3, fill: true, backgroundColor: 'rgba(79, 70, 229, 0.05)' }]
-          },
-          options: { responsive: true, plugins: { legend: { display: false } } }
-        });
+        const weeklyChartEl = document.getElementById('weeklyChart');
+        if (weeklyChartEl) {
+          if (weeklyChartInstance) weeklyChartInstance.destroy();
+          weeklyChartInstance = new Chart(weeklyChartEl.getContext('2d'), {
+            type: 'line',
+            data: {
+              labels: data.weekly_stats.map(s => s.day),
+              datasets: [{ label: 'Recettes', data: data.weekly_stats.map(s => s.total), borderColor: '#4f46e5', tension: 0.3, fill: true, backgroundColor: 'rgba(79, 70, 229, 0.05)' }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } } }
+          });
+        }
 
-        if (paymentChartInstance) paymentChartInstance.destroy();
-        paymentChartInstance = new Chart(document.getElementById('paymentChart').getContext('2d'), {
-          type: 'doughnut',
-          data: {
-            labels: ['Espèces', 'Mobile Money', 'Carte'],
-            datasets: [{ data: [data.payment_breakdown.cash || 0, data.payment_breakdown.mobile_money || 0, data.payment_breakdown.card || 0], backgroundColor: ['#4f46e5', '#f59e0b', '#10b981'] }]
-          },
-          options: { responsive: true }
-        });
+        const paymentChartEl = document.getElementById('paymentChart');
+        if (paymentChartEl) {
+          if (paymentChartInstance) paymentChartInstance.destroy();
+          paymentChartInstance = new Chart(paymentChartEl.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+              labels: ['Espèces', 'Mobile Money', 'Carte'],
+              datasets: [{ data: [data.payment_breakdown.cash || 0, data.payment_breakdown.mobile_money || 0, data.payment_breakdown.card || 0], backgroundColor: ['#4f46e5', '#f59e0b', '#10b981'] }]
+            },
+            options: { responsive: true }
+          });
+        }
       }
     }
 
@@ -698,9 +709,12 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       const res = await fetch(`${API_URL}/auth/users`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if(data.status === 'SUCCESS') {
-        document.getElementById('usersTableBody').innerHTML = data.users.map(u => `
-          <tr class="hover:bg-slate-50"><td class="p-4">${u.id}</td><td class="p-4 font-semibold">${u.username}</td><td class="p-4">${u.role}</td></tr>
-        `).join('');
+        const usersTableBody = document.getElementById('usersTableBody');
+        if(usersTableBody) {
+          usersTableBody.innerHTML = data.users.map(u => `
+            <tr class="hover:bg-slate-50"><td class="p-4">${u.id}</td><td class="p-4 font-semibold">${u.username}</td><td class="p-4">${u.role}</td></tr>
+          `).join('');
+        }
       }
     }
 
