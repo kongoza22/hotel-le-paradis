@@ -387,7 +387,7 @@
     </div>
   </div>
 
-  <script>
+<script>
     const API_URL = 'https://hotel-le-paradis.onrender.com/api';
     let token = localStorage.getItem('pms_token');
     let user = JSON.parse(localStorage.getItem('pms_user') || '{}');
@@ -479,12 +479,15 @@
     }
 
     async function loadRooms() {
+      const container = document.getElementById('roomsContainer');
+      container.innerHTML = '<div class="col-span-full p-8 text-center text-slate-400">Chargement des chambres en cours... (Patientez si le serveur se réveille)</div>';
+      
       try {
         const res = await fetch(`${API_URL}/rooms`, { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
+        
         if (data.status === 'SUCCESS') {
-          roomsCache = data.rooms;
-          const container = document.getElementById('roomsContainer');
+          roomsCache = data.rooms || [];
           container.innerHTML = '';
           
           const selectRes = document.getElementById('room_select');
@@ -492,7 +495,12 @@
           if(selectRes) selectRes.innerHTML = '<option value="">-- Choisir --</option>';
           if(selectServ) selectServ.innerHTML = '<option value="">-- Choisir --</option>';
 
-          data.rooms.forEach(room => {
+          if (roomsCache.length === 0) {
+            container.innerHTML = '<div class="col-span-full p-8 text-center text-rose-500 font-semibold bg-rose-50 rounded-3xl border border-rose-200">Aucune chambre trouvée dans la base de données. Avez-vous initialisé vos tables ou ajouté des chambres ?</div>';
+            return;
+          }
+
+          roomsCache.forEach(room => {
             let badge = '', cls = '', acts = '';
             switch(room.status) {
               case 'occupied':
@@ -531,8 +539,13 @@
               </div>`;
           });
           lucide.createIcons();
+        } else {
+          container.innerHTML = `<div class="col-span-full p-8 text-center text-rose-500 font-semibold bg-rose-50 rounded-3xl border border-rose-200">Erreur API : ${data.message || 'Impossible de charger les chambres'}</div>`;
         }
-      } catch(err) { console.error(err); }
+      } catch(err) { 
+        console.error(err);
+        container.innerHTML = `<div class="col-span-full p-8 text-center text-rose-500 font-semibold bg-rose-50 rounded-3xl border border-rose-200">Erreur de connexion au serveur (Render est peut-être en train de redémarrer).</div>`;
+      }
     }
 
     function filterRoomsByCategory() {
